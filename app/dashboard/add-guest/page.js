@@ -20,16 +20,18 @@ export default function AddGuest () {
             roomNumber: "",
             checkInDate: "",
         },
-        onSubmit: ()=>{},
+        onSubmit: ()=>{
+            alert(`CustomerName is ${values.fullname} and he booked this room: ${values.roomType} with this number: ${values.roomNumber}`)
+        },
         validationSchema:schema,
-      })
-
+      });
     return (
         <main className="min-h-screen flex justify-center px-4 md:px-10 py-12 lg:px-16 lg:py-16">
             <div className="w-full md:w-[340px] h-auto rounded-md shadow-md px-4">
                 <h1 className="text-center text-3xl font-bold text-gray-700 ">New Guest</h1>
                 <p className="text-center text-sm text-gray-500">Fill form to Book</p>
-                <form className="flex flex-col gap-3 mt-5">
+                <form onSubmit={handleSubmit}
+                 className="flex flex-col gap-3 mt-5">
                     <div>
                         <TextField
                         fullWidth
@@ -37,7 +39,11 @@ export default function AddGuest () {
                         type="text"
                         placeholder="Enter Fullname"
                         label="Fullname"
-                        id="fullname"/>
+                        id="fullname"
+                        onChange={handleChange}
+                        value={values.fullname}
+                        />
+                        {touched.fullname && errors.fullname ? <span className="text-xs text-red-500">{errors.fullname}</span> : null}
                     </div>
                     <div>
                         <TextField
@@ -47,7 +53,10 @@ export default function AddGuest () {
                         placeholder="Enter PhoneNumber"
                         label="Phone Number"
                         id="phone"
+                        onChange={handleChange}
+                        value={values.phone}
                         />
+                        {touched.phone && errors.phone ? <span className="text-xs text-red-500">{errors.phone}</span> : null}
                     </div>
                     <FormControl>
                         <InputLabel id="roomType-label">Room Type</InputLabel>
@@ -57,12 +66,15 @@ export default function AddGuest () {
                         size="small"
                         label="Room Type"
                         id="roomType"
+                        onChange={handleChange}
+                        value={values.roomType}
                         >
                             <MenuItem value="standard-room">Standard room</MenuItem>
                             <MenuItem value="special-room">Special room</MenuItem>
                             <MenuItem value="deluxe-room">Deluxe room</MenuItem>
                             <MenuItem value="superDeluxe-room">Super-deluxe room</MenuItem>
                         </Select>
+                        {touched.roomType && errors.roomType ? <span className="text-xs text-red-500">{errors.roomType}</span> : null}
                     </FormControl>
                     <FormControl>
                         <InputLabel id="roomNumber-label">Room Number</InputLabel>
@@ -72,12 +84,15 @@ export default function AddGuest () {
                         size="small"
                         label="Room Number"
                         id="roomNumber"
+                        onChange={handleChange}
+                        value={values.roomNumber}
                         >
                             <MenuItem value="001">001</MenuItem>
                             <MenuItem value="002">002</MenuItem>
                             <MenuItem value="003">003</MenuItem>
                             <MenuItem value="004">004</MenuItem>
                         </Select>
+                        {touched.roomNumber && errors.roomNumber ? <span className="text-xs text-red-500">{errors.roomNumber}</span> : null}
                     </FormControl>
                     <div>
                         <TextField
@@ -87,7 +102,10 @@ export default function AddGuest () {
                         label="check-in date"
                         type="date"
                         id="checkInDate"
+                        onChange={handleChange}
+                        value={values.checkInDate}
                         />
+                        {touched.checkInDate && errors.checkInDate ? <span className="text-xs text-red-500">{errors.checkInDate}</span> : null}
                     </div>
                     <button type="submit" className="text-white w-full rounded-md bg-blue-400 h-8 text-sm font-bold">Book Now</button>
                     
