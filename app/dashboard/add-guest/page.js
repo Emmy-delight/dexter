@@ -1,6 +1,9 @@
   "use client"
+import { db } from "@/config/firebase.config";
 import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { addDoc, collection } from "firebase/firestore";
 import { useFormik } from "formik";
+import { useSession } from "next-auth/react";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
@@ -12,6 +15,9 @@ const schema = yup.object().shape({
     
 })
 export default function AddGuest () {
+    const {data: session} = useSession();
+    console.log(session);
+
       const {handleSubmit,handleChange,values,errors,touched} = useFormik({
         initialValues : {
             fullname: "",
@@ -20,8 +26,22 @@ export default function AddGuest () {
             roomNumber: "",
             checkInDate: "",
         },
-        onSubmit: ()=>{
-            alert(`CustomerName is ${values.fullname} and he booked this room: ${values.roomType} with this number: ${values.roomNumber}`)
+        onSubmit: async()=>{
+            try {
+                await addDoc(collection(db,"guests"),{
+                    user: session?.user?.id,
+                    fullname: values.fullname,
+                    phoneNumber: values.phone,
+                    roomType: values.roomType,
+                    roomNumber: values.roomNumber,
+                    checkInDate: values.checkInDate,
+                    timeCreated: new Date(),
+                })
+                alert("Room has been booked")
+            }
+            catch (errors) {
+              console.error("Unable to book room:",errors);
+            }
         },
         validationSchema:schema,
       });
