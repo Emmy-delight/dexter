@@ -1,9 +1,10 @@
   "use client"
 import { db } from "@/config/firebase.config";
-import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { addDoc, collection } from "firebase/firestore";
 import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
@@ -15,9 +16,12 @@ const schema = yup.object().shape({
     
 })
 export default function AddGuest () {
+    const [loading,setLoading] = useState(false);
+    const [open,setOpen] = useState(false);
     const {data: session} = useSession();
-    console.log(session);
 
+    const handleClose = () => setOpen(false)
+    
       const {handleSubmit,handleChange,values,errors,touched} = useFormik({
         initialValues : {
             fullname: "",
@@ -26,8 +30,9 @@ export default function AddGuest () {
             roomNumber: "",
             checkInDate: "",
         },
-        onSubmit: async()=>{
+        onSubmit: async(values, {resetForm})=>{
             try {
+                 setLoading(true)
                 await addDoc(collection(db,"guests"),{
                     user: session?.user?.id,
                     fullname: values.fullname,
@@ -37,9 +42,13 @@ export default function AddGuest () {
                     checkInDate: values.checkInDate,
                     timeCreated: new Date(),
                 })
-                alert("Room has been booked")
+                setOpen(true)
+                setLoading(false)
+                 resetForm();
             }
             catch (errors) {
+                setLoading(false);
+                resetForm();
               console.error("Unable to book room:",errors);
             }
         },
@@ -127,11 +136,22 @@ export default function AddGuest () {
                         />
                         {touched.checkInDate && errors.checkInDate ? <span className="text-xs text-red-500">{errors.checkInDate}</span> : null}
                     </div>
-                    <button type="submit" className="text-white w-full rounded-md bg-blue-400 h-8 text-sm font-bold">Book Now</button>
+                    <button type="submit" className="text-white w-full rounded-md bg-blue-400 h-8 text-sm font-bold">
+                        {loading? "Booking...." : "Book Now"}
+                    </button>
                     
                 </form>
 
             </div>
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Success</DialogTitle>
+                <DialogContent>
+                     <Typography>Room has been booked successfully</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} variant="contained" color="primary">Close</Button>
+                </DialogActions>
+            </Dialog>
             
         </main>
     )

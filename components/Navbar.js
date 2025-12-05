@@ -14,8 +14,8 @@ export function Navbar () {
                  <h1 className="text-2xl font-bold  text-blue-500">Dexter</h1>
                  <ul className="hidden md:text-sm font-semibold md:flex gap-10 cursor-pointer">
                     <Link href="/"><li>Home</li></Link>
-                    <li>Contact-us</li>
-                    <li>About-us</li>
+                    <Link href="/dashboard/add-guest"><li>Bookings</li></Link>
+                    <li>Guest-list</li>
                  </ul>
                  <Link href="/auth/login">
                  <div className="hidden md:block">
